@@ -1,0 +1,19 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Scala template
+*.class
+*.log
+
+.gitignore
+.idea/compiler.xml
+.idea/dictionaries/
+.idea/encodings.xml
+.idea/hydra.xml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/sbt.xml
+.idea/workspace.xml
+spark-warehouse/
+src/main/java/
+src/test/
+structure-streaming.iml
+target/
