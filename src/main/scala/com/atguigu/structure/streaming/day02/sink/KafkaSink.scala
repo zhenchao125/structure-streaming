@@ -6,7 +6,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
   * Author lzc
   * Date 2019-09-25 15:07
   */
-object FileSink {
+object KafkaSink {
     def main(args: Array[String]): Unit = {
         val spark: SparkSession = SparkSession
             .builder()
@@ -14,27 +14,26 @@ object FileSink {
             .appName("Test")
             .getOrCreate()
         import spark.implicits._
-    
+        
         val lines: DataFrame = spark.readStream
             .format("socket") // 设置数据源
             .option("host", "hadoop201")
             .option("port", 10000)
             .load
-    
+        
         val words: DataFrame = lines.as[String].flatMap(line => {
-            line.split("\\W+").map(word => {
-                (word, word.reverse)
-            })
-        }).toDF("原单词", "反转单词")
-    
+            line.split("\\W+")
+        }).toDF("value")
+        
         words.writeStream
             .outputMode("append")
-            .format("json") //  // 支持 "orc", "json", "csv"
-            .option("path", "./filesink") // 输出目录
-            .option("checkpointLocation", "./ck1")  // 必须指定 checkpoint 目录
+            .format("kafka") //  // 支持 "orc", "json", "csv"
+            .option("kafka.bootstrap.servers", "hadoop201:9092,hadoop202:9092,hadoop203:9092")
+            .option("topic", "ss0508")
+            .option("checkpointLocation", "./ck3") // 必须指定 checkpoint 目录
             .start
             .awaitTermination()
-    
-    
+        
+        
     }
 }
